@@ -36,16 +36,24 @@ public class Codec
             System.out.println("Usage : decode/encode bitString/number [dups]");
             return;
         }
-        //todo validation
+        ConfigUtil.init();
         String lOperation = args[0];
         int dups = 1;
         if (args.length == 3)
             dups = Integer.parseInt(args[2]);
         if(lOperation.equalsIgnoreCase("decode")) {
-            int lCodelength = args[1].length();
             int [] lCodeword = BitsData.bitsArrayFromStr(args[1]);
+            if(dups > 1 && ConfigUtil.getBoolProp("TRY_FIX_MISSING_ZERO", false)) {
+                int lEstimatedError = countError(lCodeword, dups);
+                if(lEstimatedError >= ConfigUtil.getIntProp("MAX_ERRORS", ConfigUtil.DEF_MAX_ERRORS) && lCodeword[lCodeword.length-1] == 0) {
+                    //try to fix it
+                    fixMissingHoleError(lCodeword, dups);
+                }
+                System.out.println(decode(lCodeword, dups) + " " + countError(lCodeword, dups));
+            } else {
+                System.out.println(decode(lCodeword, dups));
+            }
 
-            System.out.println(decode(lCodeword, dups));
         } else if (lOperation.equalsIgnoreCase("encode")){
             int lData = Integer.parseInt(args[1]);
             System.out.println(BitsData.toString(encode(lData, dups)));
@@ -66,6 +74,69 @@ public class Codec
             System.out.println("Usage : decode/encode bitString/number");
             return;
         }
+    }
+
+    private static void fixMissingHoleError(int[] aInCodeWord, int aInDups) {
+        int lLen = aInCodeWord.length;
+        int lCurrentErrors = countError(aInCodeWord, aInDups);
+        int[] lFixedCode = new int[aInCodeWord.length];
+        boolean lFixed = false;
+        if(aInCodeWord[aInCodeWord.length -1] == 0 ) {
+            //                                                      * missing an zero  * added at end
+            // change 000111000000111000111111000000111000000000000001110001111110000000
+            //        000111000000111000111111000000111000000000000000111000111111000000
+            for(int lMissingHoleIndex = ConfigUtil.getIntProp("START_POSITION", ConfigUtil.DEF_START_POSITION); lMissingHoleIndex < lLen; lMissingHoleIndex++) {
+                //todo for possible missing 0 index, it must be an 1 now and it must be following 2 starting 0 (001)
+                //also, the trailing 0 must be 3xK + 1
+                //if this should be 0 but becames a 1 because we are missing a zero (lets not worry about missing 2 zeros for now)
+                //then we must have a 001 sequence where the 1 is at 3xK -1
+                if(lMissingHoleIndex % 3 == 2 && aInCodeWord[lMissingHoleIndex] == 1 && aInCodeWord[lMissingHoleIndex -1] == 0  && aInCodeWord[lMissingHoleIndex -2 ] == 0) {
+                    //insert a 0 here and push everything after by 1 bits and remove the last 0
+                    int[] lNewCode = new int[aInCodeWord.length];
+                    for (int i = 0; i < lLen; i++) {
+                        lNewCode[i] = aInCodeWord[i];
+                    }
+                    swapBackMissingHole(lNewCode, lMissingHoleIndex);
+
+                    int nextErrorNum = countError(lNewCode, aInDups);
+                    if (nextErrorNum < lCurrentErrors) {
+                        lCurrentErrors = nextErrorNum;
+                        for (int i = 0; i < lLen; i++) {
+                            lFixedCode[i] = lNewCode[i];
+                        }
+                        lFixed = true;
+                    }
+                }
+            }
+        }
+        if(lFixed) {
+            System.out.println("Fixed from : " + BitsData.toString(aInCodeWord));
+            for (int i = 0; i < lLen; i++) {
+                aInCodeWord[i] = lFixedCode[i];
+            }
+            System.out.println("To         : " + BitsData.toString(aInCodeWord));
+        }
+    }
+
+    private static void swapBackMissingHole(int[] lNewCode, int swapIndex) {
+        int len = lNewCode.length;
+        for(int i = len-1; i > swapIndex; i--) {
+            lNewCode[i] = lNewCode[i-1];
+        }
+        lNewCode[swapIndex] = 0;
+    }
+
+    private static int countError(int[] lCodeword, int dups) {
+        int errors = 0;
+        if(dups > 1) {
+            for(int i = 0; i < lCodeword.length/dups; i++) {
+                int lDupTotal = lCodeword[i * 3 ] + lCodeword[i * 3 +1 ] + lCodeword[i * 3 +2];
+                if(lDupTotal != 0 && lDupTotal != 3) {
+                    errors = errors + (3 - lDupTotal);
+                }
+            }
+        }
+        return errors;
     }
 
     private static void test(int aInErrorRate, int aInLoop, boolean log) {
