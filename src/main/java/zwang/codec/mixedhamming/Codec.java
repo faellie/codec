@@ -1,10 +1,13 @@
 package zwang.codec.mixedhamming;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
 public class Codec
 {
+
+    private static Logger logger = LoggerFactory.getLogger(Codec.class);
     public static int decode(int [] aInCode, int aInDups){
         //todo validations
         int[] lHammingWord;
@@ -32,6 +35,7 @@ public class Codec
     }
 
     public static void main(String[] args) {
+        logger.info("test logger");
         if (args.length < 2) {
             System.out.println("Usage : decode/encode bitString/number [dups]");
             return;
@@ -43,7 +47,7 @@ public class Codec
             dups = Integer.parseInt(args[2]);
         if(lOperation.equalsIgnoreCase("decode")) {
             int [] lCodeword = BitsData.bitsArrayFromStr(args[1]);
-            if(dups > 1 && ConfigUtil.getBoolProp("TRY_FIX_MISSING_ZERO", false)) {
+            if (dups > 1 && ConfigUtil.getBoolProp("TRY_FIX_MISSING_ZERO", false)) {
                 int lEstimatedError = countError(lCodeword, dups);
                 if(lEstimatedError >= ConfigUtil.getIntProp("MAX_ERRORS", ConfigUtil.DEF_MAX_ERRORS) && lCodeword[lCodeword.length-1] == 0) {
                     //try to fix it
@@ -59,7 +63,7 @@ public class Codec
             System.out.println(BitsData.toString(encode(lData, dups)));
         } else if (lOperation.equalsIgnoreCase("test")){
             if(args.length == 2 && args[1].equals("sanity")) {
-                UnitTest.runUnitTests();;
+                SanityTest.runUnitTests();;
                 return;
             }
             if (args.length != 4) {

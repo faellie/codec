@@ -1,0 +1,18 @@
+<configuration>
+    <!--
+     file rolling is disabled in logback as it is handled already by log4j
+    -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <File>./codec.log</File>
+        <!--<Append>true</Append>-->
+        <encoder>
+            <pattern>&lt;%d{dd MMM yyyy HH:mm:ss.SSS} [%p] [%t][%C.%M:%L]&gt; %n%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="zwang.codec.mixedhamming" level="INFO"> appender-ref ref="FILE"></logger>
+
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

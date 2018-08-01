@@ -1,7 +1,11 @@
 package zwang.codec.mixedhamming;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class BitsData
 {
+    private static Logger logger = LoggerFactory.getLogger(BitsData.class);
     static int MAX_INPUT = 65535;
     private static int length = 16;
     private int[] bitsArray = new int[length];

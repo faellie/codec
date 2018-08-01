@@ -1,7 +1,12 @@
 package zwang.codec.mixedhamming;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class HammingCoder
 {
+    private static Logger logger = LoggerFactory.getLogger(HammingCoder.class);
+
     private static int tripleLenth = 66;
     private int[] hammingArray = new int[HammingUtils.CODE_WORD_LENGTH];
     //for now its always 22/6

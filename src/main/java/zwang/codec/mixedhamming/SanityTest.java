@@ -1,10 +1,14 @@
 package zwang.codec.mixedhamming;
 
-import java.util.Map;
-import java.util.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class UnitTest
+import java.util.Map;
+
+public class SanityTest
 {
+    private static Logger logger = LoggerFactory.getLogger(SanityTest.class);
+
     public static void main(String[] args) {
 
         runUnitTests();

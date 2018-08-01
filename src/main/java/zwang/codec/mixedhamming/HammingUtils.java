@@ -1,12 +1,17 @@
 package zwang.codec.mixedhamming;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HammingUtils
 {
+
+    private static Logger logger = LoggerFactory.getLogger(HammingUtils.class);
 
     public static int DATA_LENGTH = 16;
     public static int CODE_WORD_LENGTH = 22;

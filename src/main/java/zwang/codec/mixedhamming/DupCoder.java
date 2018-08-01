@@ -1,9 +1,13 @@
 package zwang.codec.mixedhamming;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DupCoder
 {
 
+    private static Logger logger = LoggerFactory.getLogger(DupCoder.class);
 
     private int dups ;
     private int dataLength;
