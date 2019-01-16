@@ -6,34 +6,32 @@ import org.slf4j.LoggerFactory;
 public class BitsData
 {
     private static Logger logger = LoggerFactory.getLogger(BitsData.class);
-    static int MAX_INPUT = 65535;
-    private static int length = 16;
-    private int[] bitsArray = new int[length];
+    private int[] dataArray = new int[ConfigUtil.DATA_LENGTH];
 
     public BitsData(int input) {
-        for(int i = 0; i < bitsArray.length; i ++)
-            bitsArray[i] = 0;
-        if(input > MAX_INPUT) {
-            System.out.println("Cannot encode " + input + ".Maximum input is " + MAX_INPUT);
+        for(int i = 0; i < dataArray.length; i ++)
+            dataArray[i] = 0;
+        if(input > ConfigUtil.MAX_INPUT) {
+            logger.error("Cannot encode " + input + ".Maximum input is " + ConfigUtil.MAX_INPUT);
             return;
         }
         else {
-            // we put the lowest bit on the first index and pad the rest of bitsArray as 0
-            // ex 13 ==> 1101 => bitsArray = [1011000000000000]
-            for(int j = 0; j < bitsArray.length; j++) {
-                bitsArray[j] = (input >> j) & 1;
+            // we put the lowest bit on the first index and pad the rest of dataArray as 0
+            // ex 13 ==> 1101 => dataArray = [1011000000000000]
+            for(int j = 0; j < dataArray.length; j++) {
+                dataArray[j] = (input >> j) & 1;
             }
         }
     }
 
-    public int[] getBitsArray() {
-        return bitsArray;
+    public int[] getDataArray() {
+        return dataArray;
     }
 
     public int toInt() {
         int ret = 0;
-        for(int i = 0; i < length; i++) {
-            ret = ret + bitsArray[i] * (1<<i);
+        for(int i = 0; i < ConfigUtil.DATA_LENGTH; i++) {
+            ret = ret + dataArray[i] * (1<<i);
         }
         return ret;
     }
@@ -47,7 +45,7 @@ public class BitsData
         return ret;
     }
     public String toString() {
-        return toString(bitsArray);
+        return toString(dataArray);
     }
 
     public static String toString(int [] aInArray) {

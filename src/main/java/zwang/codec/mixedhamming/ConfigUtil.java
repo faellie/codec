@@ -21,6 +21,14 @@ public class ConfigUtil
 
     public static int DEF_START_POSITION = 6;
     public static int DEF_MAX_ERRORS = 16;
+
+    //number of bits for the actual data
+    public static int DATA_LENGTH = 16;
+    public static int CODE_WORD_LENGTH = 22;
+    public static int PARITY_LENGTH = 6;
+
+    public static int MAX_INPUT = (int)Math.pow(2, DATA_LENGTH) - 1;
+
     public static void init() {
         FileInputStream lIn = null;
         try {
@@ -41,7 +49,7 @@ public class ConfigUtil
         try {
             return Integer.parseInt(config.getProperty(aInKey));
         } catch (Exception e) {
-            System.out.println("Failed to get " + aInKey + ". Exception: " + e);
+            logger.warn("Failed to get " + aInKey + ". Exception: " + e);
         }
 
         System.out.println("returning default: " + aInDef);
@@ -56,10 +64,10 @@ public class ConfigUtil
         try {
             return Boolean.parseBoolean(config.getProperty(aInKey));
         } catch (Exception e) {
-            System.out.println("Failed to get " + aInKey + ". Exception: " + e);
+            logger.warn("Failed to get " + aInKey + ". Exception: " + e);
         }
 
-        System.out.println("returning default: " + aInDef);
+        logger.warn("returning default: " + aInDef);
         return aInDef;
 
     }

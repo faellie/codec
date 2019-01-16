@@ -114,11 +114,11 @@ public class Codec
             }
         }
         if(lFixed) {
-            System.out.println("Fixed from : " + BitsData.toString(aInCodeWord));
+            logger.info("Fixed Missing zeros from : " + BitsData.toString(aInCodeWord));
             for (int i = 0; i < lLen; i++) {
                 aInCodeWord[i] = lFixedCode[i];
             }
-            System.out.println("To         : " + BitsData.toString(aInCodeWord));
+            logger.info("Fixed Missing zeros To   : " + BitsData.toString(aInCodeWord));
         }
     }
 
@@ -148,7 +148,7 @@ public class Codec
         int detectedError = 0;
         int undetectedError = 0;
         for(int i = 0; i < aInLoop; i ++) {
-            int ret = testWholeCodeWithErrorFix(i%65535, aInErrorRate*100, log);
+            int ret = testWholeCodeWithErrorFix(i%ConfigUtil.MAX_INPUT, aInErrorRate*100, log);
             if(ret == -2) {
                 undetectedError ++;
             } else  if(ret == -1) {

@@ -17,7 +17,7 @@ public class SanityTest
     public static void runUnitTests(){
         //test encode/decode without error
         System.out.println("test encode/decode without error....");
-        for (int i = 0; i < 65535; i++) {
+        for (int i = 0; i < ConfigUtil.MAX_INPUT; i++) {
             if (!testNoErrorCodeDecode(i)) {
                 System.out.println("testNoErrorCodeDecode failed for " + i);
                 return;
@@ -26,8 +26,8 @@ public class SanityTest
 
         //test one bit error (111 ==> 000/000==>111)
         System.out.println("test one bit error....");
-        for (int i = 0; i < 65535; i++) {
-            for (int j = 0; j < HammingUtils.CODE_WORD_LENGTH; j++) {
+        for (int i = 0; i < ConfigUtil.MAX_INPUT; i++) {
+            for (int j = 0; j < ConfigUtil.CODE_WORD_LENGTH; j++) {
                 if (!testOneErrorCodeDecode(i, j)) {
                     System.out.println("testOneErrorCodeDecode failed for " + i + " " + j);
                     return;
@@ -37,9 +37,9 @@ public class SanityTest
 
         //test two bit error (111 ==> 000/000==>111)
         System.out.println("test two bit error....");
-        for (int i = 0; i < 65535; i++) {
-            for (int j = 0; j < HammingUtils.CODE_WORD_LENGTH; j++) {
-                for (int k = 0; k < HammingUtils.CODE_WORD_LENGTH; k++) {
+        for (int i = 0; i < ConfigUtil.MAX_INPUT; i++) {
+            for (int j = 0; j < ConfigUtil.CODE_WORD_LENGTH; j++) {
+                for (int k = 0; k < ConfigUtil.CODE_WORD_LENGTH; k++) {
                     if (!testTwoErrorCodeDecode(i, j, k)) {
                         System.out.println("testTwoErrorCodeDecode failed for " + i + " " + j);
                         return;
@@ -48,7 +48,7 @@ public class SanityTest
             }
         }
         System.out.println("test Error Bit Mapping....");
-        for (int i = 0; i < 65535; i++) {
+        for (int i = 0; i < ConfigUtil.MAX_INPUT; i++) {
             if (!testErrorBitMapping(i)) {
                 System.out.println("testErrorBitMapping failed for " + i);
                 return;
@@ -62,7 +62,7 @@ public class SanityTest
         HammingCoder lHammingCoder = new HammingCoder(lTestBits);
 
         //now put an error
-        for(int i = 0; i < HammingUtils.CODE_WORD_LENGTH; i ++) {
+        for(int i = 0; i < ConfigUtil.CODE_WORD_LENGTH; i ++) {
             lHammingCoder = new HammingCoder(lTestBits);
             lHammingCoder.test1BitError(i);
             int [] checkingBits = HammingUtils.calcParityCode(lHammingCoder);
@@ -131,7 +131,7 @@ public class SanityTest
         HammingCoder lHammingCoder = new HammingCoder(lTestBits);
 
         //now put an error
-        for(int i = 0; i < HammingUtils.CODE_WORD_LENGTH; i ++) {
+        for(int i = 0; i < ConfigUtil.CODE_WORD_LENGTH; i ++) {
             lHammingCoder = new HammingCoder(lTestBits);
             lHammingCoder.test1BitError(i);
             int [] checkingBits = HammingUtils.calcParityCode(lHammingCoder);

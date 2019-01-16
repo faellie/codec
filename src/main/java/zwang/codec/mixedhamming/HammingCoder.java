@@ -7,10 +7,7 @@ public class HammingCoder
 {
     private static Logger logger = LoggerFactory.getLogger(HammingCoder.class);
 
-    private static int tripleLenth = 66;
-    private int[] hammingArray = new int[HammingUtils.CODE_WORD_LENGTH];
-    //for now its always 22/6
-    private int length = HammingUtils.CODE_WORD_LENGTH;
+    private int[] hammingArray = new int[ConfigUtil.CODE_WORD_LENGTH];
 
     /*private int[] dataArray = new int[HammingEncode.DATA_LENGTH];
     private int[] parityArray = new int[HammingEncode.PARITY_LENGTH];
@@ -29,15 +26,15 @@ public class HammingCoder
 
 
     public HammingCoder(int[]  aInHammingArray) {
-        for(int i = 0; i < HammingUtils.CODE_WORD_LENGTH; i ++) {
+        for(int i = 0; i < ConfigUtil.CODE_WORD_LENGTH; i ++) {
             hammingArray[i] = aInHammingArray[i];
         }
     }
 
 
     public int[] getDataArray() {
-        int[] lDataArray = new int[HammingUtils.DATA_LENGTH];
-        for(int i = 0; i < HammingUtils.DATA_LENGTH; i ++) {
+        int[] lDataArray = new int[ConfigUtil.DATA_LENGTH];
+        for(int i = 0; i < ConfigUtil.DATA_LENGTH; i ++) {
             lDataArray[i] = hammingArray[i];
         }
         return lDataArray;
@@ -45,9 +42,9 @@ public class HammingCoder
 
 
     public int[] getParityrray() {
-        int[] lParityArray = new int[HammingUtils.PARITY_LENGTH];
-        for(int i = HammingUtils.DATA_LENGTH; i < HammingUtils.CODE_WORD_LENGTH; i ++) {
-            lParityArray[i- HammingUtils.DATA_LENGTH] = hammingArray[i];
+        int[] lParityArray = new int[ConfigUtil.PARITY_LENGTH];
+        for(int i = ConfigUtil.DATA_LENGTH; i < ConfigUtil.CODE_WORD_LENGTH; i ++) {
+            lParityArray[i- ConfigUtil.DATA_LENGTH] = hammingArray[i];
         }
         return lParityArray;
     }
@@ -69,18 +66,12 @@ public class HammingCoder
 
     public int getData() {
         int ret = 0;
-        for(int i = 0; i < HammingUtils.DATA_LENGTH; i ++) {
+        for(int i = 0; i < ConfigUtil.DATA_LENGTH; i ++) {
            ret = ret + (hammingArray[i] << i) ;
         }
 
         return ret;
     }
-
-    public int getLength() {
-        return length;
-    }
-
-
 
 
 }

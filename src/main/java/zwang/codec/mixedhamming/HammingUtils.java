@@ -12,12 +12,7 @@ public class HammingUtils
 {
 
     private static Logger logger = LoggerFactory.getLogger(HammingUtils.class);
-
-    public static int DATA_LENGTH = 16;
-    public static int CODE_WORD_LENGTH = 22;
-    public static int PARITY_LENGTH = 6;
-    public static int MAX_DATA = 65535;
-
+    public static final String CORRECT_PARITY_STR = "000000";
 
     /*P0 = D0 + D1 + D3 + D4 + D6 + D8 + D10 + D11 + D13 + D15
         P1 = D0 + D2 + D3 + D5 + D6 + D9 + D10 + D12 + D13
@@ -87,48 +82,37 @@ public class HammingUtils
     };
 
     public static void encode(BitsData aInBits, int[] aInHammingArray) {
-        int[] lBitsArray = aInBits.getBitsArray();
-        for(int i = 0; i < DATA_LENGTH; i++) {
+        int[] lBitsArray = aInBits.getDataArray();
+        for(int i = 0; i < ConfigUtil.DATA_LENGTH; i++) {
             aInHammingArray[i] = lBitsArray[i];
         }
 
-        for(int j = DATA_LENGTH + 1 ; j < CODE_WORD_LENGTH; j++) {
-            int index = j - DATA_LENGTH;
-            aInHammingArray[j] = arrayTime(lBitsArray, MATRIX[index], DATA_LENGTH);
+        for(int j = ConfigUtil.DATA_LENGTH + 1 ; j < ConfigUtil.CODE_WORD_LENGTH; j++) {
+            int index = j - ConfigUtil.DATA_LENGTH;
+            aInHammingArray[j] = arrayTime(lBitsArray, MATRIX[index], ConfigUtil.DATA_LENGTH);
         }
 
-        int bit16 = arrayTime(aInHammingArray, MATRIX[0], CODE_WORD_LENGTH);
+        int bit16 = arrayTime(aInHammingArray, MATRIX[0], ConfigUtil.CODE_WORD_LENGTH);
         aInHammingArray[16] = bit16 %2;
     }
 
 
 
     public static int[] calcParityCode(HammingCoder aInCode) {
-        int[] lHammingCode = new int[HammingUtils.CODE_WORD_LENGTH];
-        int[] lParityArray = new int[PARITY_LENGTH];
-        for(int i = 0; i < PARITY_LENGTH; i++ ) {
+        int[] lHammingCode = new int[ConfigUtil.CODE_WORD_LENGTH];
+        int[] lParityArray = new int[ConfigUtil.PARITY_LENGTH];
+        for(int i = 0; i < ConfigUtil.PARITY_LENGTH; i++ ) {
 
-            lParityArray[i] = arrayTime(aInCode.getHammingArray(), MATRIX[i], CODE_WORD_LENGTH);
+            lParityArray[i] = arrayTime(aInCode.getHammingArray(), MATRIX[i], ConfigUtil.CODE_WORD_LENGTH);
         }
         return lParityArray;
     }
 
 
     public static boolean haveError(HammingCoder aInCode) {
-       /* int[] lHammingCode = aInCode.getHammingArray();
-        int bitsSum = 0;
-        for(int i = 0; i < HammingUtils.DATA_LENGTH; i++) {
-            bitsSum = bitsSum + lHammingCode[i];
-        }
-        bitsSum = (bitsSum + lHammingCode[DATA_LENGTH])%2;
-        if(bitsSum == 1) {
-            return true;
-        }
-        */
         int[] lParityArray = calcParityCode(aInCode);
         String lParityStr = BitsData.toString(lParityArray);
-
-        return(!(lParityStr.equals(getCorrectParityStr(aInCode))));
+        return(!(lParityStr.equals(CORRECT_PARITY_STR)));
     }
 
     public static void correctError(HammingCoder aInCode) {
@@ -154,10 +138,6 @@ public class HammingUtils
             ret = (ret + aInArrayA[i] * aInArrayB[i]) % 2;
         }
         return ret;
-    }
-
-    public static String getCorrectParityStr(HammingCoder aInCode) {
-        return "000000";
     }
 
     public static int decode(HammingCoder aInCode) {
